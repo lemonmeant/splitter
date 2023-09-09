@@ -122,7 +122,11 @@ button[data-tooltip]:hover:after {
 const INPUT_MAX_LENGTH = 300;
 const BUFFER = 5;
 const PUNCTUATIONS = [".", "!", "?", "…"];
-const BRACKETS = ["()", "[]", "{}"];
+const BRACKET_PAIRS = {
+    '(': ')',
+    '[': ']',
+    '{': '}'
+};
 
 const inputText = document.getElementById('inputText');
 const segmentButton = document.getElementById('segmentButton');
@@ -144,31 +148,67 @@ function copyToClipboard(text) {
 }
 
 function isInsideBrackets(text, index) {
-    let openBrackets = 0;
+    let stack = [];
     for (let i = 0; i <= index; i++) {
-        if (text[i] === '(' || text[i] === '[' || text[i] === '{') openBrackets++;
-        else if (text[i] === ')' || text[i] === ']' || text[i] === '}') openBrackets--;
+        if (BRACKET_PAIRS[text[i]]) {
+            stack.push(text[i]);
+        } else if (Object.values(BRACKET_PAIRS).includes(text[i])) {
+            if (stack.length === 0 || BRACKET_PAIRS[stack.pop()] !== text[i]) {
+                return true; // unmatched closing bracket
+            }
+        }
     }
-    return openBrackets !== 0;
+    return stack.length !== 0;
 }
 
 function getSegmentEnd(text, maxLength) {
-    let end = Math.min(text.length, maxLength);
-    while (end > 0 && !(
-        PUNCTUATIONS.includes(text[end]) && 
-        text[end + 1] === ' ' && 
-        !isInsideBrackets(text, end)
-    )) {
-        end--;
+    let end = maxLength;
+    let acceptableMinLength = Math.floor(maxLength * 0.5);
+
+    // First, try to split at a newline if it exists within the segment's range.
+    let lastNewline = text.lastIndexOf('\n', end);
+    if (lastNewline > acceptableMinLength && lastNewline <= maxLength) {
+        return lastNewline + 1;
     }
-    return end === 0 ? maxLength : end + 2;
+
+    // Find the last suitable punctuation before the segment's range.
+    let lastPunctuation = -1;
+    for (let p of PUNCTUATIONS) {
+        let pos = text.lastIndexOf(p, end);
+        if (pos > lastPunctuation) {
+            lastPunctuation = pos;
+        }
+    }
+
+    if (lastPunctuation > 0 && !isInsideBrackets(text, lastPunctuation)) {
+        return lastPunctuation + 1;
+    }
+
+    // Check if end position is inside brackets and adjust if necessary.
+    if (isInsideBrackets(text, end)) {
+        for (let i = end; i >= 0; i--) {
+            if (BRACKET_PAIRS[text[i]]) {
+                return i; // Move back to the opening bracket.
+            }
+        }
+    }
+
+    return end;
 }
 
+
+
+
+
 function segmentText() {
-    let cleanedText = inputText.value.replace(/\s+/g, ' ')  
-                                    .replace(/([\(\[\{])\s+/g, '$1')  
-                                    .replace(/\s+([\)\]\}])/g, '$1');
-                                    
+    let cleanedText = inputText.value.replace(/ +/g, ' ')  // Replace consecutive spaces with a single space
+                                     .replace(/\n+/g, '\n')  // Replace consecutive newline characters with a single newline
+                                     .replace(/([\(\[\{])\s+/g, '$1')  // Remove spaces after opening brackets
+                                     .replace(/\s+([\)\]\}])/g, '$1')  // Remove spaces before closing brackets
+                                     .trim();  // Remove leading and trailing spaces and newlines
+    
+    
+
     let segments = [];
     let currentIndex = 0;
 
@@ -191,14 +231,15 @@ function renderSegments(segments) {
     segments.forEach((seg, index) => {
         let skeetDiv = document.createElement('div');
         skeetDiv.classList.add('skeet');
-        let threadIndicator = `🧵 ${index + 1}/${segments.length}`;
-        let skeetContentHTML = `${threadIndicator}<br><br>${seg}`;
+        let threadIndicator = `${index + 1}/${segments.length}`;
+        let skeetContentHTML = `${threadIndicator}<br><br>${seg.replace(/\n/g, "<br>")}`;
+        
         
         let copyButton = document.createElement('button');
         copyButton.innerText = 'Copy';
         copyButton.classList.add('copy');
         copyButton.onclick = function() {
-            copyToClipboard(`${threadIndicator}\n\n${seg}`);
+            copyToClipboard(`${threadIndicator}\n${seg}`);
         };
 
         skeetDiv.innerHTML = skeetContentHTML;
