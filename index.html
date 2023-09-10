@@ -370,14 +370,35 @@ threadIndicatorDropdown.addEventListener('change', function() {
 
     if (value === "default") {
         threadIndicatorSymbol = "";
-    } else if (value === "custom") {
+    } else if (value === "custom" || value === "changeEmoji") {
         let customSymbol = prompt("Enter the symbol to use:");
 
         if (customSymbol) {
             customSymbol = customSymbol.trim();
-            this.options[this.selectedIndex].text = customSymbol;
-            this.options[this.selectedIndex].value = customSymbol;
+
+            // Check if changeEmoji option already exists, if not create it.
+            let changeEmojiOption = Array.from(this.options).find(opt => opt.value === "changeEmoji");
+            if (!changeEmojiOption) {
+                changeEmojiOption = new Option("Change emoji", "changeEmoji");
+                this.add(changeEmojiOption);
+            }
+
+            // Locate the custom option and update its text and value
+            let customOption = Array.from(this.options).find(opt => opt.value === "custom");
+
+            if (!customOption) {
+                customOption = new Option(customSymbol, "custom");  // if it doesn't exist, create it with fixed value 'custom'
+                this.add(customOption);
+            }
+
+            // Update the custom option's text, but not its value
+            customOption.textContent = customSymbol; // Update the visible text
+
             threadIndicatorSymbol = customSymbol;
+
+            // Set the selected option to the custom option.
+            this.value = "custom";
+
         } else {
             alert("Please enter a valid single symbol.");
             this.value = "default";
@@ -386,6 +407,8 @@ threadIndicatorDropdown.addEventListener('change', function() {
         threadIndicatorSymbol = value;
     }
 });
+
+
 
 function segmentText() {
     let cleanedText = inputText.value.replace(/ +/g, ' ')
@@ -400,6 +423,12 @@ function segmentText() {
     while (currentIndex < cleanedText.length) {
         let segmentEnd = getSegmentEnd(cleanedText.slice(currentIndex, currentIndex + INPUT_MAX_LENGTH - BUFFER), INPUT_MAX_LENGTH - BUFFER);
         let segment = cleanedText.slice(currentIndex, currentIndex + segmentEnd);
+        
+        if (!segmentEnd || !segment) {
+            alert('Unable to segment the text properly. Please check the input.');
+            break;
+        }
+
 
         if (segment) {
             segments.push(segment);
