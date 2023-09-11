@@ -209,6 +209,19 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     animation: magicSparkle 0.5s ease forwards;
 }
 
+/* New class for copied state in light mode */
+.copy.copied {
+    background-color: #4CAF50; /* Good green shade for visibility in light mode */
+    color: #f4f4f4;
+}
+
+/* New class for copied state in dark mode */
+.dark-mode .copy.copied {
+    background-color: #66BB6A; /* Good green shade for visibility in dark mode */
+    color: #2c2c2c;
+}
+
+
 
 
     </style>
@@ -237,6 +250,7 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
 
     <script>
 
+let copiedButtons = [];
 
 const themeToggle = document.getElementById('themeToggle');
 
@@ -301,6 +315,15 @@ function copyToClipboard(text, buttonElement) {
     setTimeout(() => {
         buttonElement.classList.remove('magic-effect');
     }, 500);  // 500ms matches the animation duration
+
+    // Mark this button as copied
+    buttonElement.classList.add('copied');
+
+    // Remember this button's clicked state in the copiedButtons array
+    const index = Array.from(skeetsDisplay.children).indexOf(buttonElement.parentElement);
+    if (!copiedButtons.includes(index)) {
+        copiedButtons.push(index);
+    }
 }
 
 
