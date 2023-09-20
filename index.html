@@ -18,6 +18,11 @@ body {
     margin: 0 auto;
 }
 
+textarea, #skeetsDisplay {
+    box-sizing: border-box;
+}
+
+
 textarea {
     width: 100%;
     min-height: 200px;
@@ -80,7 +85,7 @@ select:focus {
     box-shadow: 0 2px 4px rgba(59, 67, 79, 0.1);
 }
 
-button[data-tooltip]:hover:after {
+button[data-tooltip]:hover:after, label[data-tooltip]:hover:after {
     content: attr(data-tooltip);
     background-color: #454d59;
     color: #f4f4f4;
@@ -101,21 +106,27 @@ button[data-tooltip]:hover:after {
 
 
 .skeet {
+    display: flex;  /* Set the .skeet to use flexbox */
+    justify-content: space-between;  /* Space out the children of .skeet (text and copy button) */
+    align-items: start;  /* Align items to the top */
     border: 1px solid #74b8f9;
     padding: 10px;
     margin-top: 10px;
-    position: relative;
     transition: opacity 0.5s;
     background-color: #f2ebf3;
     border-radius: 5px;
 }
 
 .skeet .copy {
-    position: absolute;
-    top: 5px;
-    right: 5px;
+    margin-left: 10px;  /* Space between text and copy button */
     background-color: #454d59;
+    flex-shrink: 0;  /* Prevent button from shrinking */
 }
+
+.skeet-content {  /* New class for the content inside .skeet, excluding the copy button */
+    flex-grow: 1;  /* Allow content to take up maximum available space */
+}
+
 
 .dark-mode {
     background-color: #2c2c2c;
@@ -138,6 +149,7 @@ button[data-tooltip]:hover:after {
 .dark-mode #skeetsDisplay {
     border-color: #666;
     background-color: #3a3a3a;
+    color: #f4f4f4;
 }
 
 .dark-mode .skeet {
@@ -221,6 +233,13 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     color: #2c2c2c;
 }
 
+label[data-tooltip] {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+
 
 
 
@@ -245,6 +264,11 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
         <option value="📌">📌</option>
         <option value="custom">Your own</option>
     </select>
+    
+    <input type="checkbox" id="excludeCounterCheckbox" style="margin-left: 10px;">
+    <label for="excludeCounterCheckbox" data-tooltip="Exclude the segment counter (like 1/n) from each thread segment">Exclude counter</label>
+    
+    
     
     <div id="skeetsDisplay"></div>
 
@@ -274,6 +298,9 @@ themeToggle.addEventListener('click', () => {
     }
 });
 
+
+
+
 // On page load, set the mode based on user's OS settings or localStorage if previously set
 document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('theme') === 'dark-mode') {
@@ -282,7 +309,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('dark-mode');
     }
     setModeEmoji();
+
+    // Restore the saved input text and emoji choice
+    if (localStorage.getItem('savedText')) {
+        inputText.value = localStorage.getItem('savedText');
+        charCount.innerText = `${inputText.value.length} characters`; // Update the character count
+    }
+    if (localStorage.getItem('savedEmojiChoice')) {
+        threadIndicatorDropdown.value = localStorage.getItem('savedEmojiChoice');
+        // Trigger the change event to set the threadIndicatorSymbol
+        threadIndicatorDropdown.dispatchEvent(new Event('change'));
+    }
+    if (localStorage.getItem('savedExcludeCounter') !== null) {
+        excludeCounterCheckbox.checked = JSON.parse(localStorage.getItem('savedExcludeCounter'));
+    }
+
 });
+
 
 const INPUT_MAX_LENGTH = 300;
 const BUFFER = 5;
@@ -429,6 +472,7 @@ threadIndicatorDropdown.addEventListener('change', function() {
     } else {
         threadIndicatorSymbol = value;
     }
+    localStorage.setItem('savedEmojiChoice', this.value);
 });
 
 
@@ -463,24 +507,43 @@ function segmentText() {
     renderSegments(segments);
 }
 
+const excludeCounterCheckbox = document.getElementById('excludeCounterCheckbox');
+
+excludeCounterCheckbox.addEventListener('change', () => {
+    localStorage.setItem('savedExcludeCounter', excludeCounterCheckbox.checked); // Save the current state of the checkbox
+});
+
+
 function renderSegments(segments) {
     skeetsDisplay.innerHTML = '';
     segments.forEach((seg, index) => {
+        let excludeCounter = document.getElementById('excludeCounterCheckbox').checked;
+        let threadIndicator = "";
+        
+        if (excludeCounter) {
+            threadIndicator = threadIndicatorSymbol ? `${threadIndicatorSymbol} ` : "";
+        } else {
+            threadIndicator = threadIndicatorSymbol ? `${threadIndicatorSymbol} ${index + 1}/${segments.length}\n` : `${index + 1}/${segments.length}\n`;
+        }
+
         let skeetDiv = document.createElement('div');
         skeetDiv.classList.add('skeet');
-        let threadIndicator = threadIndicatorSymbol ? `${threadIndicatorSymbol} ${index + 1}/${segments.length}` : `${index + 1}/${segments.length}`;
-        let skeetContentHTML = `${threadIndicator}<br><br>${seg.replace(/\n/g, "<br>")}`;
-
+        
+        let skeetContentDiv = document.createElement('div');  // New div for content
+        skeetContentDiv.classList.add('skeet-content');
+        let skeetContentHTML = `${threadIndicator.replace('\n', '<br>')}${seg.replace(/\n/g, "<br>")}`;
+        skeetContentDiv.innerHTML = skeetContentHTML;
+        skeetDiv.appendChild(skeetContentDiv);  // Append the content div to skeet
+        
         let copyButton = document.createElement('button');
         copyButton.innerText = 'Copy';
         copyButton.classList.add('copy');
+        let copyContent = threadIndicator + seg;
         copyButton.onclick = function() {
-            copyToClipboard(`${threadIndicator}\n${seg}`, this);
+            copyToClipboard(copyContent, this);
         };
-        
-
-        skeetDiv.innerHTML = skeetContentHTML;
         skeetDiv.appendChild(copyButton);
+        
         skeetDiv.style.opacity = '0';
         skeetsDisplay.appendChild(skeetDiv);
 
@@ -490,8 +553,15 @@ function renderSegments(segments) {
     });
 }
 
+
+
 inputText.addEventListener('input', () => {
     charCount.innerText = `${inputText.value.length} characters`;
+});
+
+inputText.addEventListener('input', () => {
+    charCount.innerText = `${inputText.value.length} characters`;
+    localStorage.setItem('savedText', inputText.value); // Save the current input text
 });
 
 segmentButton.addEventListener('click', segmentText);
