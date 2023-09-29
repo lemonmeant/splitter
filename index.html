@@ -920,7 +920,7 @@ threadIndicatorDropdown.addEventListener('change', function() {
         if (customSymbol) {
             customSymbol = customSymbol.trim();
             
-            customSymbol = customSymbol[0];
+            // customSymbol = customSymbol[0];
 
             // Check if changeEmoji option already exists, if not create it.
             let changeEmojiOption = Array.from(this.options).find(opt => opt.value === "changeEmoji");
