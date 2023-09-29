@@ -22,7 +22,6 @@ textarea, #skeetsDisplay {
     box-sizing: border-box;
 }
 
-
 textarea {
     width: 100%;
     min-height: 200px;
@@ -74,7 +73,6 @@ select:focus {
     border-color: #1b79f3;
 }
 
-
 #skeetsDisplay {
     margin-top: 20px;
     max-height: 60vh;
@@ -104,11 +102,10 @@ button[data-tooltip]:hover:after, label[data-tooltip]:hover:after {
     text-align: left;
 }
 
-
 .skeet {
     display: flex;
     justify-content: space-between;
-    align-items: center;  /* Center align the items vertically */
+    align-items: center;
     border: 1px solid #74b8f9;
     padding: 10px;
     margin-top: 10px;
@@ -117,20 +114,17 @@ button[data-tooltip]:hover:after, label[data-tooltip]:hover:after {
     border-radius: 5px;
 }
 
-
 .skeet .copy {
-    margin-left: 10px;  /* Space between text and copy button */
+    margin-left: 10px;
     background-color: #454d59;
-    flex-shrink: 0;  /* Prevent button from shrinking */
+    flex-shrink: 0;
 }
 
 .skeet-content {
     flex-grow: 1;
-    word-break: break-word;  /* Allows the breaking of long words/links */
-    overflow-wrap: break-word;  /* Wraps long words/links */
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
-
-
 
 .dark-mode {
     background-color: #2c2c2c;
@@ -171,7 +165,6 @@ button[data-tooltip]:hover:after, label[data-tooltip]:hover:after {
     color: #f4f4f4;
 }
 
-
 ::-webkit-scrollbar {
     width: 12px; 
 }
@@ -187,11 +180,9 @@ button[data-tooltip]:hover:after, label[data-tooltip]:hover:after {
     border: 3px solid #f1f1f1; 
 }
 
-
 ::-webkit-scrollbar-thumb:hover {
     background: #555; 
 }
-
 
 body.dark-mode::-webkit-scrollbar-track {
     background: #444; 
@@ -225,16 +216,31 @@ body.dark-mode::-webkit-scrollbar-thumb:hover {
     animation: magicSparkle 0.5s ease forwards;
 }
 
-/* New class for copied state in light mode */
 .copy.copied {
-    background-color: #4CAF50; /* Good green shade for visibility in light mode */
+    background-color: #4CAF50;
     color: #f4f4f4;
 }
 
-/* New class for copied state in dark mode */
 .dark-mode .copy.copied {
-    background-color: #66BB6A; /* Good green shade for visibility in dark mode */
+    background-color: #66BB6A;
     color: #2c2c2c;
+}
+
+.selectors-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 5px;
+}
+
+.language-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#threadIndicatorDropdown {
+    display: inline-block;
 }
 
 label[data-tooltip] {
@@ -243,11 +249,380 @@ label[data-tooltip] {
     cursor: help;
 }
 
+.dark-mode #postThreadButton {
+    background-color: #FF8C00;
+}
+
+.dark-mode #loginPopup {
+    background-color: #2c2c2c;
+}
+
+#segmentButton, #cleanButton, #postThreadButton {
+    margin-right: 5px;
+}
+
+input[type="checkbox"] {
+    vertical-align: left;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 30px;
+    border: none;
+    width: 40%;
+    max-width: 400px;
+    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.3);
+    position: relative;
+    border-radius: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #444;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 15px 0;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    max-width: 90%;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #1b79f3;
+    box-shadow: 0 0 10px rgba(17, 111, 253, 0.2);
+}
+
+
+
+.login-button {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 20px;
+    border: none;
+    background-color: #1b79f3;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.login-button:hover {
+    background-color: #157ab5;
+    transform: scale(1.05);
+}
+
+.dark-mode .modal-content {
+    background-color: #2c2c2c;
+    color: #f4f4f4;
+}
+
+.dark-mode .close-button {
+    color: #bbb;
+}
+
+.dark-mode input[type="text"], .dark-mode input[type="password"] {
+    background-color: #3a3a3a;
+    color: #f4f4f4;
+    border-color: #555;
+}
+
+.dark-mode input[type="text"]:focus, .dark-mode input[type="password"]:focus {
+    border-color: #679cec;
+    box-shadow: 0 0 10px rgba(103, 156, 236, 0.2);
+}
+
+.dark-mode .login-button {
+    background-color: #454d59;
+}
+
+.dark-mode .login-button:hover {
+    background-color: #353b45;
+}
+
+@keyframes modalOpen {
+    from {
+        opacity: 0;
+        transform: translateY(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes modalClose {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-50%);
+    }
+}
+
+.modal-content {
+    animation: modalOpen 0.5s forwards;
+}
+
+.modal-exit {
+    animation: modalClose 0.5s forwards;
+}
+
+.language-container {
+    display: flex;
+    align-items: center;
+}
+
+.language-button {
+    max-width: 200px;  /* Maximum width */
+    overflow: hidden; /* Hide overflow content */
+    white-space: nowrap; /* Prevent text wrapping */
+    transition: font-size 0.3s; /* Smooth transition for font size change */
+}
+
+
+#languageSelect {
+    border: 1px solid #74b8f9;
+    width: 150px;
+    margin-left: 10px;
+    overflow-y: auto;
+    max-height: 150px;
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    z-index: 10;
+}
+
+.language-dropdown {
+    border: 1px solid #74b8f9;
+    width: 150px;
+    overflow-y: auto;
+    max-height: 150px;
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    z-index: 10;
+    padding: 10px;
+}
+
+#languageSelect:focus {
+    border-color: #1b79f3;
+}
+
+#languageSelect option:checked {
+    background-color: #f0f0f0;
+}
+
+@media only screen and (max-width: 600px) {
+    #languageSelect {
+        width: 100%;
+    }
+}
+
+.dark-mode #languageDropdown {
+    border-color: #666;
+    background-color: #3a3a3a;
+}
+
+.dark-mode #languageButton {
+    background-color: #454d59;
+    color: #f4f4f4;
+}
+
+.dark-mode #languageButton:hover {
+    background-color: #353b45;
+}
+
+.dark-mode label {
+    color: #f4f4f4;
+}
+
+#languageSearch {
+    margin-bottom: 10px;
+    width: 90%;
+    padding: 5px;
+    border: 1px solid #74b8f9;
+    border-radius: 4px;
+}
+
+.dark-mode #languageSearch {
+    background-color: #3a3a3a;
+    color: #f4f4f4;
+    border-color: #555;
+}
+
+
+@media only screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+        font-size: 16px;  /* Adjusted for better readability on mobile */
+    }
+
+    /* Making input elements and buttons stretch to the full width */
+    textarea, select, button, #skeetsDisplay {
+        width: 100%;
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    /* Adjusting the modal to fit better on smaller screens */
+    .modal-content {
+        width: 90%;
+        margin: 20% auto;
+    }
+
+    /* Increasing button padding for more comfortable tapping */
+    button, .login-button {
+        padding: 12px 20px;
+    }
+
+    /* Adjusting margins for buttons for better spacing */
+    #segmentButton, #cleanButton, #postThreadButton {
+        margin-bottom: 10px;
+    }
+
+    /* Adjusting the language select dropdown for mobile */
+    #languageSelect {
+        width: 100%;
+        position: relative;
+        display: block;
+    }
+
+    /* Adjusting container layouts for mobile */
+    .selectors-container, .language-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;  /* Adding a gap for better spacing */
+    }
+    
+    /* Adjusting dropdowns for mobile */
+    .language-dropdown, #threadIndicatorDropdown {
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 5px;
+    }
+    
+    .language-button, #threadIndicatorButton {
+        padding-right: 25px; /* Additional space for the dropdown indicator */
+        background: none; /* Removing the background for mobile */
+    }
+    
+    /* Adjustments for the checkbox */
+    input[type="checkbox"] {
+        margin-right: 10px;
+        margin-top: 5px; /* Adding a top margin for better spacing */
+        background-color: #fff;
+        border: 1px solid #74b8f9;
+        border-radius: 3px;
+        width: 20px;
+        height: 20px;
+    }
+    
+    label[for="counterExcludeCheckbox"] {
+        display: flex;
+        align-items: center;
+    }
+    
+     .selectors-container {
+            flex-direction: row; /* Layout items in a row */
+            justify-content: space-between; /* Space items apart as much as possible */
+            gap: 5px;  /* Slight gap between items */
+        }
+        
+        /* Adjusting dropdowns for mobile */
+        .language-dropdown, #threadIndicatorDropdown {
+            width: 48%; /* Each takes up roughly half the available width, accounting for the gap */
+            margin-top: 5px;
+            border-radius: 5px;
+        }
+        button:not(.copy) {
+            width: 100%; /* Full width on mobile */
+            margin: 10px 0; /* Some margin to separate them from other elements */
+        }
+        
+       .skeet .copy {
+            width: auto; /* Reset to natural width */
+            margin: 0;   /* Remove any added margin */
+        }
+    
+}
+
+#logoutLink {
+    color: #1b79f3;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+#logoutLink:hover {
+    color: #679cec;
+}
+
+.dark-mode #logoutLink {
+    color: #888;
+}
+
+#loader {
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #3498db; /* Blue */
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    display: none;
+    margin: auto;
+}
+
+.dark-mode #loader {
+    border-top: 8px solid #888;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 
 
 
 
     </style>
+
 
 
 </head>
@@ -262,6 +637,14 @@ label[data-tooltip] {
     <p id="charCount">0 characters</p>
     <button id="segmentButton" data-tooltip="Click to segment your message into thread">Segment</button>
     <button id="cleanButton" data-tooltip="Click to clear the text area">Clean</button>
+    <button id="postThreadButton" style="background-color: #FFA500;" data-tooltip="Click to post the segmented thread to BlueSky">Post</button>
+<div class="selectors-container">
+    <div class="language-container">
+        <button id="languageButton">Choose Language</button>
+        <div id="languageDropdown" class="language-dropdown">
+            <!-- Options will be dynamically populated -->
+        </div>
+    </div>
     <select id="threadIndicatorDropdown">
         <option value="default">No emoji</option>
         <option value="🧵">🧵</option>
@@ -269,22 +652,37 @@ label[data-tooltip] {
         <option value="📌">📌</option>
         <option value="custom">Your own</option>
     </select>
+</div>
+
+
+
+    
     
     <input type="checkbox" id="excludeCounterCheckbox" style="margin-left: 10px;">
-    <label for="excludeCounterCheckbox" data-tooltip="Exclude the segment counter (like 1/n) from each thread segment">Exclude counter</label>
+    <label for="excludeCounterCheckbox" data-tooltip="Exclude the segment counter (like 1/n) from each thread segment">❌🔢</label>
+<div id="loginPopup" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeLoginPopup()">&times;</span>
+        <h3>Login to BlueSky</h3>
+        <input type="text" id="handle" placeholder="Handle">
+        <input type="password" id="appPassword" placeholder="App Password">
+        <button type="button" class="login-button" onclick="loginAndStartThreadPosting()">Login</button>
+    </div>
+</div>
+
     
     
-    
+    <div id="loader"></div>
     <div id="skeetsDisplay"></div>
 
     <script>
 
-// Constants
-const EXPIRATION_TIME = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
+const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
+const CREDENTIALS_EXPIRATION_TIME = 30 * DAY_IN_MILLISECONDS; // 30 days
+const DEFAULT_EXPIRATION_TIME = 2 * DAY_IN_MILLISECONDS; // 2 days
 
-// Backup the original setItem and getItem methods
-const originalSetItem = localStorage.setItem;
-const originalGetItem = localStorage.getItem;
+const originalSetItem = localStorage.setItem.bind(localStorage);
+const originalGetItem = localStorage.getItem.bind(localStorage);
 
 localStorage.setItem = function(key, value) {
     const timestampKey = key + "-timestamp";
@@ -296,13 +694,62 @@ localStorage.getItem = function(key) {
     const timestampKey = key + "-timestamp";
     const savedTimestamp = originalGetItem.call(localStorage, timestampKey);
     const currentTime = new Date().getTime();
-    if (!savedTimestamp || currentTime - savedTimestamp > EXPIRATION_TIME) {
+    let expirationTime;
+
+    if (key === 'obfuscatedCredentials') {
+        expirationTime = CREDENTIALS_EXPIRATION_TIME;
+    } else {
+        expirationTime = DEFAULT_EXPIRATION_TIME;
+    }
+
+    if (!savedTimestamp || currentTime - savedTimestamp > expirationTime) {
         localStorage.removeItem(key);           // Remove the expired data
         localStorage.removeItem(timestampKey);  // Remove its timestamp
         return null; // Return null if the data has expired
     }
     return originalGetItem.call(localStorage, key);
 };
+
+
+function obfuscate(str) {
+    const ZERO = '\u200B';  // Zero-width space
+    const ONE = '\u200D';   // Zero-width joiner
+    
+    let result = '';
+    
+    for (let i = 0; i < str.length; i++) {
+        let binStr = str.charCodeAt(i).toString(2).padStart(8, '0');
+        for (let bit of binStr) {
+            result += (bit === '0') ? ZERO : ONE;
+        }
+    }
+    
+    return result;
+}
+
+function deobfuscate(str) {
+    const ZERO = '\u200B';
+    const ONE = '\u200D';
+    
+    let result = '';
+    let charBin = '';
+    
+    for (let char of str) {
+        if (char === ZERO) {
+            charBin += '0';
+        } else if (char === ONE) {
+            charBin += '1';
+        }
+        
+        if (charBin.length === 8) {
+            result += String.fromCharCode(parseInt(charBin, 2));
+            charBin = '';
+        }
+    }
+    
+    return result;
+}
+
 
 
 let copiedButtons = [];
@@ -472,6 +919,8 @@ threadIndicatorDropdown.addEventListener('change', function() {
 
         if (customSymbol) {
             customSymbol = customSymbol.trim();
+            
+            customSymbol = customSymbol[0];
 
             // Check if changeEmoji option already exists, if not create it.
             let changeEmojiOption = Array.from(this.options).find(opt => opt.value === "changeEmoji");
@@ -614,6 +1063,436 @@ function cleanTextArea() {
 
 const cleanButton = document.getElementById('cleanButton');
 cleanButton.addEventListener('click', cleanTextArea);
+
+const BASE_URL = 'https://bsky.social/xrpc/';
+const JSON_HEADERS = {
+    'Content-Type': 'application/json'
+};
+
+async function createSession(username, password) {
+    console.log('Attempting to create session...');
+    const response = await fetch(`${BASE_URL}com.atproto.server.createSession`, {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({
+            identifier: username,
+            password: password
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to create session: ${response.statusText}`);
+    }
+
+    return response.json();
+}
+
+async function postMessage(session, text, langs, threadMetadata = {}) {
+    console.log('Attempting to post message...');
+    const response = await fetch(`${BASE_URL}com.atproto.repo.createRecord`, {
+        method: 'POST',
+        headers: {
+            ...JSON_HEADERS,
+            'Authorization': `Bearer ${session['accessJwt']}`
+        },
+        body: JSON.stringify({
+            repo: session['did'],
+            collection: 'app.bsky.feed.post',
+            record: {
+                "$type": "app.bsky.feed.post",
+                "createdAt": new Date().toISOString(),
+                "text": text,
+                "langs": langs,
+                ...threadMetadata
+            }
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to post message: ${response.statusText}`);
+    }
+
+    return response.json();
+}
+
+
+async function postThread(credentials) {
+    const skeets = document.querySelectorAll('.skeet-content');
+    if (skeets.length === 0) {
+        alert('Please segment your message into skeets before posting.');
+        return;
+    }
+
+    const handle = credentials.handle;
+    const appPassword = credentials.appPassword;
+    const langs = selectedLanguages;
+
+    if (langs.length === 0) {
+        alert('Please select at least one language.');
+        return;
+    }
+
+    if (langs.length > 3) {
+        alert('Please select up to three languages.');
+        return;
+    }
+
+    // Show the loader
+    const loader = document.getElementById('loader');
+    loader.style.display = 'block';
+
+    try {
+        const session = await createSession(handle, appPassword);
+        let rootMetadata = null;
+        let previousPostMetadata = null;
+
+        for (const skeet of skeets) {
+            let text = skeet.innerHTML.replace(/<br>/g, '\n').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+
+            let metadata;
+            if (!rootMetadata) {
+                metadata = await postMessage(session, text, langs);
+                rootMetadata = {
+                    uri: metadata.uri,
+                    cid: metadata.cid
+                };
+            } else {
+                metadata = await postMessage(session, text, langs, {
+                    reply: {
+                        root: rootMetadata,
+                        parent: {
+                            uri: previousPostMetadata.uri,
+                            cid: previousPostMetadata.cid
+                        }
+                    }
+                });
+            }
+
+            previousPostMetadata = metadata;
+        }
+
+        alert("Thread posted successfully!");
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to post. Check the browser console for more details.');
+    } finally {
+        // Hide the loader
+        loader.style.display = 'none';
+    }
+}
+
+
+
+
+async function loginAndStartThreadPosting() {
+    const handle = document.getElementById('handle').value.trim();
+    const appPassword = document.getElementById('appPassword').value.trim();
+
+    // Check if handle and appPassword are provided
+    if (!handle || !appPassword) {
+        alert("Please enter correct credentials.");
+        return;
+    }
+
+    const credentials = JSON.stringify({ handle, appPassword });
+    const obfuscatedCredentials = obfuscate(credentials);
+    
+    localStorage.setItem('obfuscatedCredentials', obfuscatedCredentials);
+    
+    closeLoginPopup();
+    postThread({ handle, appPassword });
+}
+
+
+
+
+
+async function showLoginPopupIfNeeded() {
+    const obfuscatedCredentials = localStorage.getItem('obfuscatedCredentials');
+
+    if (obfuscatedCredentials) {
+        const decryptedCredentials = deobfuscate(obfuscatedCredentials);
+        postThread(JSON.parse(decryptedCredentials));
+    } else {
+        document.getElementById("loginPopup").style.display = "block";
+    }
+}
+
+
+
+function closeLoginPopup() {
+    const modalContent = document.querySelector('.modal-content');
+    modalContent.classList.add('modal-exit');
+    setTimeout(() => {
+        document.getElementById("loginPopup").style.display = "none";
+        modalContent.classList.remove('modal-exit');  // Reset the class for next use
+    }, 500);  // Wait for 500ms (animation duration) before hiding the modal
+}
+
+const availableLanguages = [
+    { code: 'uk', name: 'Ukrainian' },
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'French' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'de', name: 'German' },
+    { code: 'ru', name: 'Russian' },
+    { code: 'it', name: 'Italian' },
+    { code: 'pt-PT', name: 'Portuguese (European)' },
+    { code: 'pt-BR', name: 'Portuguese (Brazilian)' },
+    { code: 'pl', name: 'Polish' },
+    { code: 'nl', name: 'Dutch' },
+    { code: 'sv', name: 'Swedish' },
+    { code: 'no', name: 'Norwegian' },
+    { code: 'da', name: 'Danish' },
+    { code: 'fi', name: 'Finnish' },
+    { code: 'el', name: 'Greek' },
+    { code: 'cs', name: 'Czech' },
+    { code: 'hu', name: 'Hungarian' },
+    { code: 'ro', name: 'Romanian' },
+    { code: 'sk', name: 'Slovak' },
+    { code: 'sl', name: 'Slovenian' },
+    { code: 'hr', name: 'Croatian' },
+    { code: 'bg', name: 'Bulgarian' },
+    { code: 'sr', name: 'Serbian' },
+    { code: 'ar', name: 'Arabic' },
+    { code: 'zh-CN', name: 'Chinese (Simplified)' },
+    { code: 'zh-TW', name: 'Chinese (Traditional)' },
+    { code: 'ja', name: 'Japanese' },
+    { code: 'hi', name: 'Hindi' },
+    { code: 'bn', name: 'Bengali' },
+    { code: 'jv', name: 'Javanese' },
+    { code: 'la', name: 'Latin' },
+    { code: 'ko', name: 'Korean' },
+    { code: 'ms', name: 'Malay' },
+    { code: 'tr', name: 'Turkish' },
+    { code: 'sw', name: 'Swahili' },
+    { code: 'eu', name: 'Basque' },
+    { code: 'ca', name: 'Catalan' },
+    { code: 'eo', name: 'Esperanto' },
+    { code: 'et', name: 'Estonian' },
+    { code: 'tl', name: 'Filipino' },
+    { code: 'gl', name: 'Galician' },
+    { code: 'ka', name: 'Georgian' },
+    { code: 'ht', name: 'Haitian Creole' },
+    { code: 'he', name: 'Hebrew' },
+    { code: 'is', name: 'Icelandic' },
+    { code: 'ig', name: 'Igbo' },
+    { code: 'id', name: 'Indonesian' },
+    { code: 'ga', name: 'Irish' },
+    { code: 'km', name: 'Khmer' },
+    { code: 'ku', name: 'Kurdish' },
+    { code: 'ky', name: 'Kyrgyz' },
+    { code: 'lo', name: 'Lao' },
+    { code: 'lv', name: 'Latvian' },
+    { code: 'lt', name: 'Lithuanian' },
+    { code: 'lb', name: 'Luxembourgish' },
+    { code: 'mk', name: 'Macedonian' },
+    { code: 'mg', name: 'Malagasy' },
+    { code: 'ml', name: 'Malayalam' },
+    { code: 'mt', name: 'Maltese' },
+    { code: 'mi', name: 'Maori' },
+    { code: 'mr', name: 'Marathi' },
+    { code: 'mn', name: 'Mongolian' },
+    { code: 'my', name: 'Myanmar (Burmese)' },
+    { code: 'ne', name: 'Nepali' },
+    { code: 'ny', name: 'Chichewa' },
+    { code: 'ps', name: 'Pashto' },
+    { code: 'fa', name: 'Persian' },
+    { code: 'st', name: 'Sesotho' },
+    { code: 'si', name: 'Sinhala' },
+    { code: 'so', name: 'Somali' },
+    { code: 'su', name: 'Sundanese' },
+    { code: 'tg', name: 'Tajik' },
+    { code: 'ta', name: 'Tamil' },
+    { code: 'te', name: 'Telugu' },
+    { code: 'th', name: 'Thai' },
+    { code: 'uk', name: 'Ukrainian' },
+    { code: 'ur', name: 'Urdu' },
+    { code: 'uz', name: 'Uzbek' },
+    { code: 'vi', name: 'Vietnamese' },
+    { code: 'cy', name: 'Welsh' },
+    { code: 'xh', name: 'Xhosa' },
+    { code: 'yi', name: 'Yiddish' },
+    { code: 'zu', name: 'Zulu' }
+];
+
+
+
+
+const selectedLanguages = [];
+
+// Populate dropdown with available languages
+const languageDropdown = document.getElementById('languageDropdown');
+
+const languageButton = document.getElementById('languageButton');
+
+function updateLanguageButton() {
+    if (selectedLanguages.length === 0) {
+        languageButton.textContent = 'Choose Language';
+    } else {
+        languageButton.textContent = `${selectedLanguages.join(', ')}`;
+    }
+}
+
+// Save the selected languages to localStorage
+function saveSelectedLanguages() {
+    localStorage.setItem('selectedLanguages', JSON.stringify(selectedLanguages));
+}
+
+// Populate dropdown with available languages FIRST
+availableLanguages.forEach(language => {
+    const container = document.createElement('div');
+    container.className = 'language-container';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = language.code;
+    checkbox.value = language.code;
+    
+    const label = document.createElement('label');
+    label.htmlFor = language.code;
+    label.textContent = language.name;
+
+    container.appendChild(checkbox);
+    container.appendChild(label);
+    languageDropdown.appendChild(container);
+});
+
+// Load the selected languages from localStorage AFTER populating dropdown
+function loadSelectedLanguages() {
+    const savedLanguages = JSON.parse(localStorage.getItem('selectedLanguages'));
+    if (savedLanguages) {
+        savedLanguages.forEach(lang => {
+            const checkbox = document.getElementById(lang.toLowerCase());
+            if (checkbox) {
+                checkbox.checked = true;
+                selectedLanguages.push(lang);
+            }
+        });
+        updateLanguageButton();
+    }
+}
+
+// Call the load function after populating the dropdown
+loadSelectedLanguages();
+
+function updateCheckboxAvailability() {
+    const checkboxes = languageDropdown.querySelectorAll('input[type="checkbox"]');
+    if (selectedLanguages.length >= 3) {
+        checkboxes.forEach(checkbox => {
+            if (!checkbox.checked) {
+                checkbox.disabled = true;
+            }
+        });
+    } else {
+        checkboxes.forEach(checkbox => {
+            checkbox.disabled = false;
+        });
+    }
+}
+
+updateCheckboxAvailability();
+
+
+
+languageButton.addEventListener('click', () => {
+    if (languageDropdown.style.display === 'none' || !languageDropdown.style.display) {
+        languageDropdown.style.display = 'block';
+    } else {
+        languageDropdown.style.display = 'none';
+    }
+});
+
+
+languageDropdown.addEventListener('change', (event) => {
+    const languageName = event.target.value.toUpperCase();
+    if (event.target.checked) {
+        if (!selectedLanguages.includes(languageName)) {
+            selectedLanguages.push(languageName);
+        }
+    } else {
+        const index = selectedLanguages.indexOf(languageName);
+        if (index > -1) {
+            selectedLanguages.splice(index, 1);
+        }
+    }
+    updateLanguageButton();
+    saveSelectedLanguages();
+    updateCheckboxAvailability();  // Save to localStorage
+});
+
+// Hide the dropdown when clicking outside
+document.addEventListener('click', (event) => {
+    if (!languageDropdown.contains(event.target) && !languageButton.contains(event.target)) {
+        languageDropdown.style.display = 'none';
+    }
+});
+
+// Create a search input at the top of the dropdown
+const searchInput = document.createElement('input');
+searchInput.type = 'text';
+searchInput.placeholder = 'Search...';
+searchInput.id = 'languageSearch';
+
+// Insert the search input at the beginning of the dropdown
+languageDropdown.insertBefore(searchInput, languageDropdown.firstChild);
+
+// Filtering function
+function filterLanguages() {
+    const query = searchInput.value.toLowerCase();
+    
+    // Get all the containers
+    const containers = languageDropdown.querySelectorAll('.language-container');
+
+    containers.forEach(container => {
+        const label = container.querySelector('label');
+        if (label.textContent.toLowerCase().startsWith(query)) {
+            container.style.display = 'block';  // Changed to 'block'
+        } else {
+            container.style.display = 'none';
+        }
+    });
+}
+// Attach the event listener to the search input
+searchInput.addEventListener('input', filterLanguages);
+
+
+
+document.getElementById("postThreadButton").addEventListener("click", showLoginPopupIfNeeded);
+
+function checkCredentials() {
+    const credentials = localStorage.getItem('obfuscatedCredentials');
+    if (credentials) {
+        displayLogoutLink();
+    }
+}
+
+function displayLogoutLink() {
+    const logoutLink = document.createElement('a');
+    logoutLink.href = "#";
+    logoutLink.innerText = "Logout";
+    logoutLink.id = "logoutLink";
+    logoutLink.style.textAlign = "center";
+    logoutLink.style.display = "block";
+    logoutLink.style.marginTop = "20px";
+    logoutLink.style.cursor = "pointer";
+    logoutLink.addEventListener('click', handleLogout);
+
+    const skeetsDisplay = document.getElementById('skeetsDisplay');
+    skeetsDisplay.insertAdjacentElement('afterend', logoutLink);
+}
+
+
+function handleLogout(event) {
+    event.preventDefault();
+    localStorage.removeItem('obfuscatedCredentials');
+    localStorage.removeItem('obfuscatedCredentials-timestamp');
+    const logoutLink = document.getElementById('logoutLink');
+    logoutLink.remove();
+}
+
+document.addEventListener('DOMContentLoaded', checkCredentials);
+
 
 
     </script>
