@@ -958,11 +958,11 @@ threadIndicatorDropdown.addEventListener('change', function() {
 
 
 function segmentText() {
-    let cleanedText = inputText.value.replace(/ +/g, ' ')
-                                     .replace(/\n+/g, '\n')
-                                     .replace(/([\(\[\{])\s+/g, '$1')
-                                     .replace(/\s+([\)\]\}])/g, '$1')
-                                     .trim();
+let cleanedText = inputText.value.replace(/ +/g, ' ')
+                                 .replace(/\n{3,}/g, '\n\n') // Collapse 3 or more newlines to two
+                                 .replace(/([\(\[\{])\s+/g, '$1')
+                                 .replace(/\s+([\)\]\}])/g, '$1')
+                                 .trim();
 
     let parts = cleanedText.split("##").map(part => part.trim()); // Added .map() to trim each part
     
