@@ -1948,6 +1948,7 @@ async function parse_facets(text, counterMode = false) {
 
     while (i < text.length) {
         try {
+            // Handle Markdown links and possible mentions within them
             if (text[i] === '[') {
                 let endBracket = text.indexOf(']', i);
                 let startParen = text.indexOf('(', endBracket);
@@ -1957,14 +1958,34 @@ async function parse_facets(text, counterMode = false) {
                     const title = text.substring(i + 1, endBracket);
                     let urlOrMention = text.substring(startParen + 1, endParen);
 
+                    // Check if it's a mention in the Markdown link
                     if (urlOrMention.startsWith('@')) {
                         const didResponse = await resolveHandle(urlOrMention);
                         if (didResponse && didResponse.did) {
-                            addPositionMapping(positionMappings, title, didResponse.did, true, i, endParen, cleanedText);
+                            positionMappings.push({
+                                title: title,
+                                url: didResponse.did,
+                                isMention: true,
+                                originalStart: i,
+                                originalEnd: endParen + 1,
+                                cleanedStart: cleanedText.length,
+                                cleanedEnd: cleanedText.length + title.length
+                            });
                         }
                     } else {
-                        urlOrMention = formatURL(urlOrMention);
-                        addPositionMapping(positionMappings, title, urlOrMention, false, i, endParen, cleanedText);
+                        // Handle as a regular link
+                        if (!urlOrMention.startsWith('http://') && !urlOrMention.startsWith('https://')) {
+                            urlOrMention = 'http://' + urlOrMention;
+                        }
+                        positionMappings.push({
+                            title: title,
+                            url: urlOrMention,
+                            isMention: false,
+                            originalStart: i,
+                            originalEnd: endParen + 1,
+                            cleanedStart: cleanedText.length,
+                            cleanedEnd: cleanedText.length + title.length
+                        });
                     }
                     cleanedText += title;
                     i = endParen + 1;
@@ -1972,6 +1993,7 @@ async function parse_facets(text, counterMode = false) {
                 }
             }
 
+            // Handle standalone mentions
             if (text[i] === '@') {
                 let endOfMention = text.indexOf(' ', i);
                 if (endOfMention === -1) {
@@ -1981,8 +2003,16 @@ async function parse_facets(text, counterMode = false) {
                 const mention = text.substring(i, endOfMention);
                 const didResponse = await resolveHandle(mention);
                 if (didResponse && didResponse.did) {
-                    addPositionMapping(positionMappings, mention, didResponse.did, true, i, endOfMention, cleanedText);
                     cleanedText += mention;
+                    positionMappings.push({
+                        title: mention,
+                        url: didResponse.did,
+                        isMention: true,
+                        originalStart: i,
+                        originalEnd: endOfMention,
+                        cleanedStart: cleanedText.length - mention.length,
+                        cleanedEnd: cleanedText.length
+                    });
                 }
 
                 i = endOfMention;
@@ -1993,68 +2023,56 @@ async function parse_facets(text, counterMode = false) {
             i++;
         } catch (error) {
             console.error("An error occurred during parsing:", error);
-            if (i < text.length - 1) {
-                i++; // Increment only if not at the end of text
-            }
+            i++;
         }
     }
 
     if (!counterMode) {
         let standaloneUrls = parse_urls(cleanedText);
-        standaloneUrls.forEach(urlDetail => {
+        for (let urlDetail of standaloneUrls) {
             let urlPosition = cleanedText.indexOf(urlDetail.url);
             while (urlPosition !== -1) {
                 let urlLength = urlDetail.url.length;
+
                 let isOverlapping = positionMappings.some(mapping => 
                     urlPosition < mapping.cleanedEnd && (urlPosition + urlLength) > mapping.cleanedStart
                 );
 
                 if (!isOverlapping) {
-                    const fullUrl = formatURL(urlDetail.url);
-                    addPositionMapping(positionMappings, fullUrl, fullUrl, false, urlPosition, urlPosition + urlLength, cleanedText);
+                    positionMappings.push({
+                        title: urlDetail.url,
+                        url: urlDetail.url.startsWith('http://') || urlDetail.url.startsWith('https://') ? urlDetail.url : 'http://' + urlDetail.url,
+                        isMention: false,
+                        originalStart: urlPosition,
+                        originalEnd: urlPosition + urlLength,
+                        cleanedStart: urlPosition,
+                        cleanedEnd: urlPosition + urlLength
+                    });
                 }
 
                 urlPosition = cleanedText.indexOf(urlDetail.url, urlPosition + urlLength);
             }
-        });
+        }
+
+        for (const mapping of positionMappings) {
+            const byteStart = getByteLength(cleanedText.substring(0, mapping.cleanedStart));
+            const byteEnd = byteStart + getByteLength(mapping.title);
+
+            facets.push({
+                index: {
+                    byteStart: byteStart,
+                    byteEnd: byteEnd
+                },
+                features: [{
+                    "$type": mapping.isMention ? "app.bsky.richtext.facet#mention" : "app.bsky.richtext.facet#link",
+                    "uri": mapping.url,
+                    "did": mapping.isMention ? mapping.url : undefined
+                }]
+            });
+        }
     }
 
-    positionMappings.forEach(mapping => {
-        const byteStart = getByteLength(cleanedText.substring(0, mapping.cleanedStart));
-        const byteEnd = byteStart + getByteLength(mapping.title);
-
-        facets.push({
-            index: {
-                byteStart: byteStart,
-                byteEnd: byteEnd
-            },
-            features: [{
-                "$type": mapping.isMention ? "app.bsky.richtext.facet#mention" : "app.bsky.richtext.facet#link",
-                "uri": mapping.url,
-                "did": mapping.isMention ? mapping.url : undefined
-            }]
-        });
-    });
-
     return { facets, text: cleanedText, textLength: cleanedText.length };
-}
-
-// Helper function to format URLs
-function formatURL(url) {
-    return url.startsWith('http://') || url.startsWith('https://') ? url : 'https://' + url;
-}
-
-// Helper function to add position mapping
-function addPositionMapping(positionMappings, title, url, isMention, originalStart, originalEnd, cleanedText) {
-    positionMappings.push({
-        title: title,
-        url: url,
-        isMention: isMention,
-        originalStart: originalStart,
-        originalEnd: originalEnd + 1,
-        cleanedStart: cleanedText.length,
-        cleanedEnd: cleanedText.length + title.length
-    });
 }
 
 
