@@ -2088,7 +2088,7 @@ async function parse_facets(text, counterMode = false) {
         }
     }
 
-    return { facets, text: cleanedText, textLength: graphemes.length };
+    return { facets, text: cleanedText, textLength: new GraphemeSplitter().splitGraphemes(cleanedText).length };
 }
 
 
