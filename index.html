@@ -812,11 +812,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const inputText = document.getElementById('inputText');
 
     inputText.addEventListener('input', function() {
-        let text = inputText.value;
-        text = text.replace(/ +/g, ' ') // Replace multiple spaces with a single space
-                   .replace(/\n{3,}/g, '\n\n');
+        // Save the current cursor position
+        const cursorPosition = inputText.selectionStart;
 
+        let text = inputText.value;
+
+        // Replace multiple spaces with a single space
+        text = text.replace(/ +/g, ' ');
+
+        // Limit consecutive newlines to 2
+        text = text.replace(/\n{3,}/g, '\n\n');
+
+        // Set the modified text value
         inputText.value = text;
+
+        // Restore the cursor position
+        inputText.setSelectionRange(cursorPosition, cursorPosition);
     });
 });
 
