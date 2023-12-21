@@ -1868,13 +1868,6 @@ async function resolveHandle(handle) {
     const initialShouldStartThreadAfterLogin = shouldStartThreadAfterLogin;
 
     const obfuscatedCredentials = localStorage.getItem('obfuscatedCredentials');
-    
-    if (obfuscatedCredentials) {
-        
-    } else {
-        shouldStartThreadAfterLogin = false;
-        document.getElementById("loginPopup").style.display = "block";
-    }
 
     handle = normalizeHandle(handle);
 
